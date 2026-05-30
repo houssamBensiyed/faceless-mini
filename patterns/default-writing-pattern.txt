@@ -1,0 +1,17 @@
+# Default Writing Pattern Template
+
+## Tone & Style
+- Tone: Professional, clear, and objective.
+- Style: Concise, direct, and well-structured.
+- Perspective: Third-person professional or first-person plural ("we") if collaborative.
+
+## Formatting Guidelines
+- Use markdown headings (H1, H2, H3) for clear hierarchy.
+- Utilize bulleted lists for readability.
+- Highlight key takeaways using bold text or quotes.
+
+## Structure
+1. **Introduction**: A high-level summary of the topic or thesis statement.
+2. **Key Concepts**: Explanation of core ideas, parameters, or systems.
+3. **Detailed Analysis**: In-depth breakdown, evidence, or structured sections.
+4. **Summary & Recommendations**: Clear actionable steps and final takeaways.
