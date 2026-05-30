@@ -1,39 +1,53 @@
 import { DataStore } from '../../src/services/interfaces/DataStore';
 
 export class StubDataStore implements DataStore {
-  private memory: Map<string, Record<string, any>[]> = new Map();
-  private batchIds: Map<string, string> = new Map();
+  private data: Record<string, Record<string, any>[]> = {};
+  private schemas: Record<string, string[]> = {};
+  private lastBatchIds: Record<string, string> = {};
+  public batchCounter = 0;
 
-  async getAll(collection: string): Promise<Record<string, any>[]> {
-    return this.memory.get(collection) || [];
+  public async getAll(collection: string): Promise<Record<string, any>[]> {
+    return this.data[collection] || [];
   }
 
-  async saveAll(
+  public seed(collection: string, items: Record<string, any>[]): void {
+    if (!this.data[collection]) {
+      this.data[collection] = [];
+    }
+    this.data[collection] = [...this.data[collection], ...items];
+  }
+
+  public async saveAll(
     collection: string,
     data: Record<string, any>[]
   ): Promise<{ success: boolean; batchId: string }> {
-    const existing = this.memory.get(collection) || [];
-    this.memory.set(collection, existing.concat(data));
-    const batchId = `batch_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    this.batchIds.set(collection, batchId);
+    this.batchCounter++;
+    const batchId = `batch-${this.batchCounter}`;
+    
+    if (!this.data[collection]) {
+      this.data[collection] = [];
+    }
+    this.data[collection] = [...this.data[collection], ...data];
+    this.lastBatchIds[collection] = batchId;
+
     return { success: true, batchId };
   }
 
-  async ensureExists(collection: string, schema: string[]): Promise<void> {
-    // no-op
+  public async ensureExists(collection: string, schema: string[]): Promise<void> {
+    if (!this.data[collection]) {
+      this.data[collection] = [];
+    }
+    this.schemas[collection] = schema;
   }
 
-  async getLastBatchId(collection: string): Promise<string | null> {
-    return this.batchIds.get(collection) || null;
+  public async getLastBatchId(collection: string): Promise<string | null> {
+    return this.lastBatchIds[collection] || null;
   }
 
-  seed(collection: string, data: Record<string, any>[]): void {
-    const existing = this.memory.get(collection) || [];
-    this.memory.set(collection, existing.concat(data));
-  }
-
-  reset() {
-    this.memory.clear();
-    this.batchIds.clear();
+  public reset(): void {
+    this.data = {};
+    this.schemas = {};
+    this.lastBatchIds = {};
+    this.batchCounter = 0;
   }
 }
